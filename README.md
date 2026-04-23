@@ -6,7 +6,7 @@
 
 *基于 MCP 协议的 HTTP 请求工具 - 让 AI 助手轻松调用 REST API*
 
-[English](./README_en.md) | 简体中文(./README.md)
+[English](./README_en.md) | [简体中文](./README.md)
 
 </div>
 
