@@ -1,44 +1,54 @@
-# mcp-fetch
+# mcp-fetch - MCP Fetch
 
-A Model Context Protocol (MCP) server that provides an HTTP request tool for calling local or remote REST API services.
+<div align="center">
 
-## Overview
+[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)  [![MCP](https://img.shields.io/badge/MCP-1.0.0-green.svg)](https://modelcontextprotocol.io/)  [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-This MCP server exposes an `http_request` tool that enables AI assistants to interact with REST APIs during testing, verification, and data retrieval workflows. It's designed for developers who want to test APIs or integrate external services into their AI-powered workflows.
+*基于 MCP 协议的 HTTP 请求工具 - 让 AI 助手轻松调用 REST API*
 
-## Features
+[English](./README_en.md) | 简体中文(./README.md)
 
-- **Multiple HTTP Methods**: Supports GET, POST, PUT, DELETE, and PATCH requests
-- **Custom Headers**: Pass custom HTTP headers for authentication or content negotiation
-- **Request Body**: Send JSON or raw body content with requests
-- **Configurable Timeout**: Set custom timeout values for long-running requests
-- **Error Handling**: Comprehensive error messages for timeouts, connection failures, and other issues
-- **Async Operations**: Built on httpx for full async support
+</div>
 
-## Installation
+## 简介
 
-### Prerequisites
+一个 Model Context Protocol (MCP) 服务器，提供 HTTP 请求工具用于调用本地或远程 REST API 服务。
 
-- Python 3.11 or higher
-- pip or uv package manager
+这个 MCP 服务器暴露了一个 `http_request` 工具，使 AI 助手能够在测试、验证和数据获取工作流程中与 REST API 进行交互。它专为希望测试 API 或将外部服务集成到 AI 工作流程中的开发者设计。
 
-### Using uv (Recommended)
+## 功能特点
+
+- **多种 HTTP 方法**：支持 GET、POST、PUT、DELETE 和 PATCH 请求
+- **自定义请求头**：传递自定义 HTTP 头用于认证或内容协商
+- **请求体**：发送 JSON 或原始内容
+- **可配置超时**：为长时间运行的请求设置自定义超时时间
+- **错误处理**：为超时、连接失败等问题提供全面的错误信息
+- **异步操作**：基于 httpx 构建，支持完整异步操作
+
+## 安装
+
+### 环境要求
+
+- Python 3.11 或更高版本
+- pip 或 uv 包管理器
+
+### 使用 uv（推荐）
 
 ```bash
 uv pip install -e .
 ```
 
-### Using pip
+### 使用 pip
 
 ```bash
 pip install -e .
 ```
 
-## Usage
+## 使用方法
 
-### As an MCP Server
+### 作为 MCP 服务器
 
-This server is designed to be used with an MCP-compatible AI assistant or client. Configure your MCP client to use this server:
+此服务器旨在与 MCP 兼容的 AI 助手或客户端配合使用。配置您的 MCP 客户端使用此服务器：
 
 ```json
 {
@@ -51,50 +61,70 @@ This server is designed to be used with an MCP-compatible AI assistant or client
 }
 ```
 
-### Running Directly
+### 在开发工具中配置
+
+在您的开发工具（如 VS Code、Trae 等 MCP 客户端）中配置此服务器：
+
+```json
+{
+  "mcpServers": {
+    "mcp-fetch": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "server.py"
+      ],
+      "cwd": "f:\\workspace\\python\\mcp-fetch"
+    }
+  }
+}
+```
+
+### 直接运行
 
 ```bash
 python server.py
 ```
 
-## Tool: http_request
+## 工具：http_request
 
-Makes an HTTP request to a local or remote service.
+向本地或远程服务发送 HTTP 请求。
 
-### Parameters
+### 参数
 
-| Parameter | Type          | Required | Default | Description                                                              |
-| --------- | ------------- | -------- | ------- | ------------------------------------------------------------------------ |
-| `url`     | string        | Yes      | -       | The full URL of the request (e.g., `http://localhost:8080/api/endpoint`) |
-| `method`  | string        | No       | GET     | HTTP method (GET, POST, PUT, DELETE, PATCH)                              |
-| `headers` | object        | No       | {}      | HTTP headers as key-value pairs                                          |
-| `body`    | object/string | No       | null    | Request body (for POST/PUT/PATCH)                                        |
-| `timeout` | number        | No       | 30      | Request timeout in seconds                                               |
+| 参数      | 类型          | 必填 | 默认值 | 说明                                                        |
+| --------- | ------------- | ---- | ------ | ----------------------------------------------------------- |
+| `url`     | string        | 是   | -      | 请求的完整 URL（例如 `http://localhost:8080/api/endpoint`） |
+| `method`  | string        | 否   | GET    | HTTP 方法（GET, POST, PUT, DELETE, PATCH）                  |
+| `headers` | object        | 否   | {}     | HTTP 请求头，键值对形式                                     |
+| `body`    | object/string | 否   | null   | 请求体（用于 POST/PUT/PATCH）                               |
+| `timeout` | number        | 否   | 30     | 请求超时时间（秒）                                          |
 
-### Response Format
+### 响应格式
 
 ```json
 {
   "status_code": 200,
   "headers": {...},
-  "body": "response content",
+  "body": "响应内容",
   "is_success": true
 }
 ```
 
-### Error Format
+### 错误格式
 
 ```json
 {
-  "error": "Error description",
-  "url": "requested URL",
-  "method": "HTTP method"
+  "error": "错误描述",
+  "url": "请求的 URL",
+  "method": "HTTP 方法"
 }
 ```
 
-## Examples
+## 使用示例
 
-### GET Request
+### GET 请求
 
 ```python
 {
@@ -103,7 +133,7 @@ Makes an HTTP request to a local or remote service.
 }
 ```
 
-### POST Request with JSON Body
+### POST 请求（带 JSON body）
 
 ```python
 {
@@ -114,13 +144,13 @@ Makes an HTTP request to a local or remote service.
     "Authorization": "Bearer token123"
   },
   "body": {
-    "name": "John Doe",
-    "email": "john@example.com"
+    "name": "张三",
+    "email": "zhangsan@example.com"
   }
 }
 ```
 
-### DELETE Request
+### DELETE 请求
 
 ```python
 {
@@ -129,37 +159,37 @@ Makes an HTTP request to a local or remote service.
 }
 ```
 
-## Development
+## 开发
 
-### Setup Development Environment
+### 设置开发环境
 
 ```bash
-# Install the package in editable mode
+# 以可编辑模式安装包
 uv pip install -e .
 
-# Or with dev dependencies
+# 或安装开发依赖
 uv pip install -e ".[dev]"
 ```
 
-### Project Structure
+### 项目结构
 
 ```
 mcp-fetch/
-├── server.py          # Main MCP server implementation
-├── main.py            # Entry point
-├── pyproject.toml     # Project configuration
-└── README.md          # This file
+├── server.py          # MCP 服务器主要实现
+├── main.py            # 入口文件
+├── pyproject.toml     # 项目配置
+└── README.md          # 说明文档
 ```
 
-## Dependencies
+## 依赖
 
 - [mcp](https://github.com/modelcontextprotocol/python-sdk) >= 1.0.0 - Model Context Protocol SDK
-- [httpx](https://www.python-httpx.org/) >= 0.27.0 - Async HTTP client
+- [httpx](https://www.python-httpx.org/) >= 0.27.0 - 异步 HTTP 客户端
 
-## License
+## 开源协议
 
 MIT License
 
-## Contributing
+## 贡献
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+欢迎提交 Pull Request！
