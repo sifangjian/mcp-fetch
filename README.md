@@ -21,6 +21,7 @@
 - **多种 HTTP 方法**：支持 GET、POST、PUT、DELETE 和 PATCH 请求
 - **自定义请求头**：传递自定义 HTTP 头用于认证或内容协商
 - **请求体**：发送 JSON 或原始内容
+- **文件上传**：支持 multipart/form-data 格式的文件上传
 - **可配置超时**：为长时间运行的请求设置自定义超时时间
 - **错误处理**：为超时、连接失败等问题提供全面的错误信息
 - **异步操作**：基于 httpx 构建，支持完整异步操作
@@ -93,13 +94,46 @@ python server.py
 
 ### 参数
 
-| 参数      | 类型          | 必填 | 默认值 | 说明                                                        |
-| --------- | ------------- | ---- | ------ | ----------------------------------------------------------- |
-| `url`     | string        | 是   | -      | 请求的完整 URL（例如 `http://localhost:8080/api/endpoint`） |
-| `method`  | string        | 否   | GET    | HTTP 方法（GET, POST, PUT, DELETE, PATCH）                  |
-| `headers` | object        | 否   | {}     | HTTP 请求头，键值对形式                                     |
-| `body`    | object/string | 否   | null   | 请求体（用于 POST/PUT/PATCH）                               |
-| `timeout` | number        | 否   | 30     | 请求超时时间（秒）                                          |
+| 参数        | 类型          | 必填 | 默认值 | 说明                                                        |
+| ----------- | ------------- | ---- | ------ | ----------------------------------------------------------- |
+| `url`       | string        | 是   | -      | 请求的完整 URL（例如 `http://localhost:8080/api/endpoint`） |
+| `method`    | string        | 否   | GET    | HTTP 方法（GET, POST, PUT, DELETE, PATCH）                  |
+| `headers`   | object        | 否   | {}     | HTTP 请求头，键值对形式                                     |
+| `body`      | object/string | 否   | null   | 请求体（用于 POST/PUT/PATCH）                               |
+| `files`     | object        | 否   | null   | 要上传的文件，支持 multipart/form-data 格式                 |
+| `form_data` | object        | 否   | null   | multipart 请求中的额外表单字段                              |
+| `timeout`   | number        | 否   | 30     | 请求超时时间（秒）                                          |
+
+### files 参数结构
+
+`files` 参数是一个对象，其键是表单字段名称，值可以是单个文件对象或文件对象数组。
+
+**单个文件对象结构：**
+
+```json
+{
+  "filename": "example.txt",
+  "content_type": "text/plain",
+  "content": "文件内容（Base64 编码或原始字符串）"
+}
+```
+
+**文件对象数组结构（用于同一字段多个文件）：**
+
+```json
+[
+  {
+    "filename": "file1.txt",
+    "content_type": "text/plain",
+    "content": "内容1"
+  },
+  {
+    "filename": "file2.txt",
+    "content_type": "text/plain",
+    "content": "内容2"
+  }
+]
+```
 
 ### 响应格式
 
@@ -156,6 +190,97 @@ python server.py
 {
   "url": "http://localhost:3000/api/users/123",
   "method": "DELETE"
+}
+```
+
+### 文件上传（单文件）
+
+```python
+{
+  "url": "http://localhost:3000/api/upload",
+  "method": "POST",
+  "files": {
+    "file": {
+      "filename": "document.pdf",
+      "content_type": "application/pdf",
+      "content": "Base64编码的文件内容..."
+    }
+  }
+}
+```
+
+### 文件上传（多文件）
+
+```python
+{
+  "url": "http://localhost:3000/api/upload",
+  "method": "POST",
+  "files": {
+    "documents": [
+      {
+        "filename": "file1.txt",
+        "content_type": "text/plain",
+        "content": "第一个文件的内容"
+      },
+      {
+        "filename": "file2.txt",
+        "content_type": "text/plain",
+        "content": "第二个文件的内容"
+      }
+    ]
+  }
+}
+```
+
+### 文件上传（带表单字段）
+
+```python
+{
+  "url": "http://localhost:3000/api/upload",
+  "method": "POST",
+  "files": {
+    "file": {
+      "filename": "avatar.png",
+      "content_type": "image/png",
+      "content": "Base64编码的图片内容..."
+    }
+  },
+  "form_data": {
+    "description": "用户头像",
+    "category": "profile"
+  }
+}
+```
+
+### PUT 请求带文件上传
+
+```python
+{
+  "url": "http://localhost:3000/api/documents/123",
+  "method": "PUT",
+  "files": {
+    "document": {
+      "filename": "updated_file.pdf",
+      "content_type": "application/pdf",
+      "content": "更新后的文件内容..."
+    }
+  }
+}
+```
+
+### PATCH 请求带文件上传
+
+```python
+{
+  "url": "http://localhost:3000/api/users/456/avatar",
+  "method": "PATCH",
+  "files": {
+    "avatar": {
+      "filename": "new_avatar.jpg",
+      "content_type": "image/jpeg",
+      "content": "Base64编码的图片内容..."
+    }
+  }
 }
 ```
 

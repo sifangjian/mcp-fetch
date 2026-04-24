@@ -21,6 +21,7 @@ This MCP server exposes an `http_request` tool that enables AI assistants to int
 - **Multiple HTTP Methods**: Supports GET, POST, PUT, DELETE, and PATCH requests
 - **Custom Headers**: Pass custom HTTP headers for authentication or content negotiation
 - **Request Body**: Send JSON or raw body content with requests
+- **File Upload**: Supports multipart/form-data format for file uploads
 - **Configurable Timeout**: Set custom timeout values for long-running requests
 - **Error Handling**: Comprehensive error messages for timeouts, connection failures, and other issues
 - **Async Operations**: Built on httpx for full async support
@@ -93,13 +94,46 @@ Makes an HTTP request to a local or remote service.
 
 ### Parameters
 
-| Parameter | Type          | Required | Default | Description                                                              |
-| --------- | ------------- | -------- | ------- | ------------------------------------------------------------------------ |
-| `url`     | string        | Yes      | -       | The full URL of the request (e.g., `http://localhost:8080/api/endpoint`) |
-| `method`  | string        | No       | GET     | HTTP method (GET, POST, PUT, DELETE, PATCH)                              |
-| `headers` | object        | No       | {}      | HTTP headers as key-value pairs                                          |
-| `body`    | object/string | No       | null    | Request body (for POST/PUT/PATCH)                                        |
-| `timeout` | number        | No       | 30      | Request timeout in seconds                                               |
+| Parameter  | Type          | Required | Default | Description                                                              |
+| ---------- | ------------- | -------- | ------- | ------------------------------------------------------------------------ |
+| `url`      | string        | Yes      | -       | The full URL of the request (e.g., `http://localhost:8080/api/endpoint`) |
+| `method`   | string        | No       | GET     | HTTP method (GET, POST, PUT, DELETE, PATCH)                              |
+| `headers`  | object        | No       | {}      | HTTP headers as key-value pairs                                          |
+| `body`     | object/string | No       | null    | Request body (for POST/PUT/PATCH)                                        |
+| `files`    | object        | No       | null    | Files to upload via multipart/form-data format                           |
+| `form_data` | object      | No       | null    | Additional form fields for multipart requests                            |
+| `timeout`  | number        | No       | 30      | Request timeout in seconds                                               |
+
+### files Parameter Structure
+
+The `files` parameter is an object where keys are form field names and values can be a single file object or an array of file objects.
+
+**Single file object structure:**
+
+```json
+{
+  "filename": "example.txt",
+  "content_type": "text/plain",
+  "content": "File content (Base64 encoded or raw string)"
+}
+```
+
+**File array structure (for multiple files in the same field):**
+
+```json
+[
+  {
+    "filename": "file1.txt",
+    "content_type": "text/plain",
+    "content": "First file content"
+  },
+  {
+    "filename": "file2.txt",
+    "content_type": "text/plain",
+    "content": "Second file content"
+  }
+]
+```
 
 ### Response Format
 
@@ -156,6 +190,97 @@ Makes an HTTP request to a local or remote service.
 {
   "url": "http://localhost:3000/api/users/123",
   "method": "DELETE"
+}
+```
+
+### File Upload (Single File)
+
+```python
+{
+  "url": "http://localhost:3000/api/upload",
+  "method": "POST",
+  "files": {
+    "file": {
+      "filename": "document.pdf",
+      "content_type": "application/pdf",
+      "content": "Base64-encoded file content..."
+    }
+  }
+}
+```
+
+### File Upload (Multiple Files)
+
+```python
+{
+  "url": "http://localhost:3000/api/upload",
+  "method": "POST",
+  "files": {
+    "documents": [
+      {
+        "filename": "file1.txt",
+        "content_type": "text/plain",
+        "content": "First file content"
+      },
+      {
+        "filename": "file2.txt",
+        "content_type": "text/plain",
+        "content": "Second file content"
+      }
+    ]
+  }
+}
+```
+
+### File Upload with Form Fields
+
+```python
+{
+  "url": "http://localhost:3000/api/upload",
+  "method": "POST",
+  "files": {
+    "file": {
+      "filename": "avatar.png",
+      "content_type": "image/png",
+      "content": "Base64-encoded image content..."
+    }
+  },
+  "form_data": {
+    "description": "User avatar",
+    "category": "profile"
+  }
+}
+```
+
+### PUT Request with File Upload
+
+```python
+{
+  "url": "http://localhost:3000/api/documents/123",
+  "method": "PUT",
+  "files": {
+    "document": {
+      "filename": "updated_file.pdf",
+      "content_type": "application/pdf",
+      "content": "Updated file content..."
+    }
+  }
+}
+```
+
+### PATCH Request with File Upload
+
+```python
+{
+  "url": "http://localhost:3000/api/users/456/avatar",
+  "method": "PATCH",
+  "files": {
+    "avatar": {
+      "filename": "new_avatar.jpg",
+      "content_type": "image/jpeg",
+      "content": "Base64-encoded image content..."
+    }
+  }
 }
 ```
 
