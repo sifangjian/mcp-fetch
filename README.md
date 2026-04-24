@@ -114,7 +114,7 @@ python server.py
 {
   "filename": "example.txt",
   "content_type": "text/plain",
-  "content": "文件内容（Base64 编码或原始字符串）"
+  "content": "文件内容（可以是字符串或字节，字符串将自动编码为 UTF-8）"
 }
 ```
 

@@ -94,15 +94,15 @@ Makes an HTTP request to a local or remote service.
 
 ### Parameters
 
-| Parameter  | Type          | Required | Default | Description                                                              |
-| ---------- | ------------- | -------- | ------- | ------------------------------------------------------------------------ |
-| `url`      | string        | Yes      | -       | The full URL of the request (e.g., `http://localhost:8080/api/endpoint`) |
-| `method`   | string        | No       | GET     | HTTP method (GET, POST, PUT, DELETE, PATCH)                              |
-| `headers`  | object        | No       | {}      | HTTP headers as key-value pairs                                          |
-| `body`     | object/string | No       | null    | Request body (for POST/PUT/PATCH)                                        |
-| `files`    | object        | No       | null    | Files to upload via multipart/form-data format                           |
-| `form_data` | object      | No       | null    | Additional form fields for multipart requests                            |
-| `timeout`  | number        | No       | 30      | Request timeout in seconds                                               |
+| Parameter   | Type          | Required | Default | Description                                                              |
+| ----------- | ------------- | -------- | ------- | ------------------------------------------------------------------------ |
+| `url`       | string        | Yes      | -       | The full URL of the request (e.g., `http://localhost:8080/api/endpoint`) |
+| `method`    | string        | No       | GET     | HTTP method (GET, POST, PUT, DELETE, PATCH)                              |
+| `headers`   | object        | No       | {}      | HTTP headers as key-value pairs                                          |
+| `body`      | object/string | No       | null    | Request body (for POST/PUT/PATCH)                                        |
+| `files`     | object        | No       | null    | Files to upload via multipart/form-data format                           |
+| `form_data` | object        | No       | null    | Additional form fields for multipart requests                            |
+| `timeout`   | number        | No       | 30      | Request timeout in seconds                                               |
 
 ### files Parameter Structure
 
@@ -114,7 +114,7 @@ The `files` parameter is an object where keys are form field names and values ca
 {
   "filename": "example.txt",
   "content_type": "text/plain",
-  "content": "File content (Base64 encoded or raw string)"
+  "content": "File content (can be string or bytes; strings will be UTF-8 encoded)"
 }
 ```
 

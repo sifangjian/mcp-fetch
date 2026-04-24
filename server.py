@@ -54,8 +54,10 @@ _TOOL_DEFINITION = Tool(
             },
             "files": {
                 "type": "object",
-                "description": "Multipart file uploads. Keys are field names, values can be a single file object or array of file objects.",
-                "additionalProperties": Union[_FORM_FILE_PROPERTY, _FORM_FILE_ARRAY_PROPERTY],
+                "description": "Multipart file uploads. Keys are field names, values can be a single file object or array of file objects. Each file object should contain 'filename' (required), 'content_type' (optional, defaults to 'application/octet-stream'), and 'content' (required, can be string or bytes; strings will be UTF-8 encoded).",
+                "additionalProperties": {
+                    "anyOf": [_FORM_FILE_PROPERTY, _FORM_FILE_ARRAY_PROPERTY]
+                },
             },
             "form_data": {
                 "type": "object",
@@ -105,7 +107,7 @@ def _build_multipart_files(files: dict) -> dict:
                 {
                     "filename": f.get("filename", "upload"),
                     "content_type": f.get("content_type", "application/octet-stream"),
-                    "content": f.get("content", b""),
+                    "content": _ensure_bytes(f.get("content", b"")),
                 }
                 for f in file_spec
             ]
@@ -113,9 +115,27 @@ def _build_multipart_files(files: dict) -> dict:
             result[field_name] = {
                 "filename": file_spec.get("filename", "upload"),
                 "content_type": file_spec.get("content_type", "application/octet-stream"),
-                "content": file_spec.get("content", b""),
+                "content": _ensure_bytes(file_spec.get("content", b"")),
             }
     return result
+
+
+def _ensure_bytes(content: Union[str, bytes]) -> bytes:
+    """
+    Ensure content is converted to bytes.
+
+    If content is a string, encode it to UTF-8 bytes.
+    If content is already bytes, return as-is.
+
+    Args:
+        content: String or bytes content to convert.
+
+    Returns:
+        Content as bytes.
+    """
+    if isinstance(content, bytes):
+        return content
+    return content.encode("utf-8")
 
 
 @server.call_tool()
